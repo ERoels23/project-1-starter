@@ -1,0 +1,6 @@
+this is actually the last line of the file, so it should definitely be showing up first. Also, i need to make absolutely sure that this line is as long as is possible, because I need to test whether or not my buffer size is being set effectively... etc.
+1 example file
+2 example file
+
+4 example file
+5 example file
