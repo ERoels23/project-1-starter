@@ -42,21 +42,27 @@ int main(int argc, char *argv[])
 	}
 
 	// process file information
-	char* buff;
-	size_t buffer_size;
+	char* trash_buff = NULL;
+	char* buff = NULL;
+	size_t buffer_size = 0;
 	char **lines;
 	// need to know how much memory to malloc (No. lines x sizeof(ptr))
 	int numLines = 0;
-	while (getline(&buff, &buffer_size, theFile) != -1) {
+	while (getline(&trash_buff, &buffer_size, theFile) != -1) {
 		numLines++;
 	}
+
+	free(trash_buff);
+
+	// reset file pointer to beginning of file
+	rewind(theFile);
 	
 	// close then re-open file to reset file pointer
 	fclose(theFile);
 	theFile = fopen(argv[1], "r");
 
 	// allocate memory for the lines of the file
-	lines = (char**) malloc(numLines * sizeof(int*));
+	lines = (char**) malloc(numLines * sizeof(char*));
 	
 	if (lines == NULL) {
 		fprintf(stderr, "error: malloc failed");
@@ -64,17 +70,20 @@ int main(int argc, char *argv[])
 	}
 
 	int i = 0;
-	buff = NULL;
 
 	while (getline(&buff, &buffer_size, theFile) != -1)
 	{
 		// save each line into an array
-		lines[i] = (char*) malloc(sizeof(buff));
-		lines[i] = buff;
-		buff = NULL;
+		// lines[i] = (char*) malloc(sizeof(buff));
+		lines[i] = strdup(buff);
+		if (lines[i] == NULL) {
+			fprintf(stderr, "error: malloc failed");
+			return 1;
+		}
 		i++;
 	}
 
+	free(buff);
 	fclose(theFile);
 
 	if (argc == 3) {
@@ -86,22 +95,22 @@ int main(int argc, char *argv[])
 			return 1;
 		}
 
-		for (int j = i - 1; j > -1; j--)
-		{
+		for (int j = numLines - 1; j > -1; j--)
+		{	
 			fprintf(oFile, "%s", lines[j]);
-			free(lines[j]);
 		}
 		fclose(oFile);
 	} else {
 		// print the lines out, but reversed
-		for (int j = i; j > -1; j--)
-		{
-			printf("%s\n", lines[j]);	
-			free(lines[j]);
+		for (int j = numLines - 1; j > -1; j--) {
+			printf("%s", lines[j]);
 		}
 	}
-
-	free(buff);
+	
+	for (int k = 0; k < numLines; k++) {
+		free(lines[k]);
+	}
+	
 	free(lines);
 	return 0;
 }
