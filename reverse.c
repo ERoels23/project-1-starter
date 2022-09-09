@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
 	lines = (char**) malloc(numLines * sizeof(char*));
 	
 	if (lines == NULL) {
-		fprintf(stderr, "error: malloc failed");
+		fprintf(stderr, "error: malloc failed\n");
 		return 1;
 	}
 
@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
 		// lines[i] = (char*) malloc(sizeof(buff));
 		lines[i] = strdup(buff);
 		if (lines[i] == NULL) {
-			fprintf(stderr, "error: malloc failed");
+			fprintf(stderr, "error: malloc failed\n");
 			return 1;
 		}
 		i++;
@@ -110,7 +110,7 @@ int main(int argc, char *argv[])
 	for (int k = 0; k < numLines; k++) {
 		free(lines[k]);
 	}
-	
+
 	free(lines);
 	return 0;
 }
